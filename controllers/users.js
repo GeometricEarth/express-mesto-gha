@@ -35,6 +35,25 @@ const getUserById = (req, res) => {
     });
 };
 
+const updateUserProfile = (req, res) => {
+  User.findByIdAndUpdate(
+    req.user._id,
+    { $set: { ...req.body } },
+    // eslint-disable-next-line comma-dangle
+    { new: true }
+  )
+    .then((result) => {
+      res.status(200).send(result);
+    })
+    .catch((err) => {
+      if (err instanceof mongoose.Error.ValidationError) {
+        res.status(400).send({ message: 'Переданы некоректные данные', err });
+        return;
+      }
+      res.status(500).setn({ message: 'Внутреняя ошибка сервера', err });
+    });
+};
+
 const addUser = (req, res) => {
   User.create(req.body)
     .then((data) => {
@@ -49,4 +68,9 @@ const addUser = (req, res) => {
     });
 };
 
-module.exports = { getAllUsers, getUserById, addUser };
+module.exports = {
+  getAllUsers,
+  getUserById,
+  addUser,
+  updateUserProfile,
+};
