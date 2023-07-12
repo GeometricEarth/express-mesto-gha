@@ -8,7 +8,7 @@ const createCard = (req, res) => {
     })
     .catch((err) => {
       res
-        .status(500)
+        .status(400)
         .send({ message: `Ошибка при создании документа карточки: ${err}` });
     });
 };
