@@ -40,14 +40,20 @@ const updateUserProfile = (req, res) => {
     req.user._id,
     { $set: { ...req.body } },
     // eslint-disable-next-line comma-dangle
-    { new: true }
+    { new: true, runValidators: true }
   )
     .then((result) => {
+      if (!result) {
+        res
+          .status(404)
+          .send({ message: 'Пользователь не найден' });
+        return;
+      }
       res.status(200).send(result);
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        res.status(400).send({ message: 'Переданы некоректные данные', err });
+        res.status(400).send({ message: 'Ошибка в данных запроса', err });
         return;
       }
       res.status(500).setn({ message: 'Внутреняя ошибка сервера', err });
