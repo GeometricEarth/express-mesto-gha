@@ -6,7 +6,7 @@ const updateUser = (req, res, body) => {
     req.user._id,
     { $set: { ...body } },
     // eslint-disable-next-line comma-dangle
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((result) => {
       res.status(200).send(result);
