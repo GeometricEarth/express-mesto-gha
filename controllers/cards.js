@@ -59,13 +59,23 @@ const dislikeCard = (req, res) => {
     req.params.cardId,
     { $pull: { likes: req.user._id } },
     { new: true },
-  ).then((result) => {
-    if (!result) {
-      res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
-      return;
-    }
-    res.status(200).send(result);
-  });
+  )
+    .then((result) => {
+      if (!result) {
+        res
+          .status(404)
+          .send({ message: 'Запрашиваемый пользователь не найден' });
+        return;
+      }
+      res.status(200).send(result);
+    })
+    .catch((err) => {
+      if (err instanceof mongoose.Error.CastError) {
+        res.status(400).send({ message: 'Переданны некоректные данные', err });
+        return;
+      }
+      res.status(500).send(err);
+    });
 };
 
 const deleteCardById = async (req, res) => {
