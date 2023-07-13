@@ -68,7 +68,7 @@ const updateUserProfile = (req, res) => {
 };
 
 const updateUserAvatar = (req, res) => {
-  if (req.body.avatar || req.body.name || req.body.about) {
+  if (!req.body.avatar) {
     res.status(400).send({ message: 'Переданы некоректные данные' });
   }
 
