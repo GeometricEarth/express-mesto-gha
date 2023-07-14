@@ -23,4 +23,12 @@ app.use((req, res, next) => {
 app.use('/users', usersRoutes);
 app.use('/cards', cardsRoutes);
 
+app.use((_req, res) => {
+  res.status(404).send('Страница которую вы запрашиваете не существует');
+});
+
 app.listen(PORT, () => console.log(`App listening on port ${PORT}`));
+
+process.on('uncaughtException', (err) => {
+  console.error(err);
+});
