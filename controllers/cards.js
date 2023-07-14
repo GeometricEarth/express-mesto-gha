@@ -7,9 +7,10 @@ const createCard = (req, res) => {
       res.status(200).send(data);
     })
     .catch((err) => {
-      res
-        .status(400)
-        .send({ message: `Ошибка при создании документа карточки: ${err}` });
+      if (err instanceof mongoose.Error.ValidationError) {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      }
+      res.status(500).send({ message: 'Внутреняя ошибка сервера' });
     });
 };
 
@@ -18,15 +19,8 @@ const getCards = (req, res) => {
     .then((cards) => {
       res.status(200).send(cards);
     })
-    .catch((err) => {
-      res.status(500).send({ message: `Ошибка ${err}` });
-    })
-    .catch((err) => {
-      if (err instanceof mongoose.Error.CastError) {
-        res.status(400).send({ message: 'Переданны некоректные данные', err });
-        return;
-      }
-      res.status(500).send(err);
+    .catch(() => {
+      res.status(500).send({ message: 'Внутреняя ошибка сервера' });
     });
 };
 
@@ -38,19 +32,17 @@ const likeCard = (req, res) => {
   )
     .then((result) => {
       if (!result) {
-        res
-          .status(404)
-          .send({ message: 'Запрашиваемый пользователь не найден' });
+        res.status(404).send({ message: 'Карточка не найдена' });
         return;
       }
       res.status(200).send(result);
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
-        res.status(400).send({ message: 'Переданны некоректные данные', err });
+        res.status(400).send({ message: 'Переданны некоректные данные' });
         return;
       }
-      res.status(500).send(err);
+      res.status(500).send({ message: 'Внутреняя ошибка сервера' });
     });
 };
 
@@ -62,19 +54,17 @@ const dislikeCard = (req, res) => {
   )
     .then((result) => {
       if (!result) {
-        res
-          .status(404)
-          .send({ message: 'Запрашиваемый пользователь не найден' });
+        res.status(404).send({ message: 'Карточка не найдена' });
         return;
       }
       res.status(200).send(result);
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
-        res.status(400).send({ message: 'Переданны некоректные данные', err });
+        res.status(400).send({ message: 'Переданны некоректные данные' });
         return;
       }
-      res.status(500).send(err);
+      res.status(500).send({ message: 'Внутреняя ошибка сервера' });
     });
 };
 
@@ -82,18 +72,16 @@ const deleteCardById = async (req, res) => {
   try {
     const result = await Card.findByIdAndRemove(req.params.cardId);
     if (!result) {
-      res
-        .status(404)
-        .send({ message: `Данный Id: ${req.params.cardId} не найден в базе` });
+      res.status(404).send({ message: 'Карточка не найдена' });
       return;
     }
     res.status(200).send({ message: 'Карточка удалена' });
   } catch (err) {
     if (err instanceof mongoose.Error.CastError) {
-      res.status(400).send({ message: 'Переданны некоректные данные', err });
+      res.status(400).send({ message: 'Переданны некоректные данные' });
       return;
     }
-    res.status(500).send(err);
+    res.status(500).send({ message: 'Внутреняя ошибка сервера' });
   }
 };
 

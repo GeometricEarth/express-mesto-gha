@@ -16,10 +16,10 @@ const updateUser = (req, res, body) => {
         err instanceof mongoose.Error.ValidationError ||
         err instanceof mongoose.Error.CastError
       ) {
-        res.status(400).send({ message: 'Переданы некоректные данные', err });
+        res.status(400).send({ message: 'Переданы некоректные данные' });
         return;
       }
-      res.status(500).send({ message: 'Внутреняя ошибка сервера', err });
+      res.status(500).send({ message: 'Внутреняя ошибка сервера' });
     });
 };
 
@@ -28,12 +28,8 @@ const getAllUsers = (req, res) => {
     .then((users) => {
       res.send(users);
     })
-    .catch((err) => {
-      if (err instanceof mongoose.Error.CastError) {
-        res.status(400).send({ message: 'Ошибка в данных запроса' });
-        return;
-      }
-      res.status(500).send({ message: 'Внутреняя ошибка сервера', err });
+    .catch(() => {
+      res.status(500).send({ message: 'Внутреняя ошибка сервера' });
     });
 };
 
@@ -48,12 +44,8 @@ const getUserById = (req, res) => {
       }
       res.send(user);
     })
-    .catch((err) => {
-      if (err instanceof mongoose.Error.CastError) {
-        res.status(400).send({ message: 'Ошибка в данных запроса' });
-        return;
-      }
-      res.status(500).send({ message: 'Внутреняя ошибка сервера', err });
+    .catch(() => {
+      res.status(500).send({ message: 'Внутреняя ошибка сервера' });
     });
 };
 
@@ -81,10 +73,10 @@ const addUser = (req, res) => {
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        res.status(400).send({ message: 'Переданы некоректные данные', err });
+        res.status(400).send({ message: 'Переданы некоректные данные' });
         return;
       }
-      res.status(500).send({ message: 'Внутреняя ошибка сервера', err });
+      res.status(500).send({ message: 'Внутреняя ошибка сервера' });
     });
 };
 
