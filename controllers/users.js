@@ -1,6 +1,18 @@
 const { default: mongoose } = require('mongoose');
 const User = require('../models/user');
 
+const errorHandler = (err, res) => {
+  if (
+    // eslint-disable-next-line operator-linebreak
+    err instanceof mongoose.Error.ValidationError ||
+    err instanceof mongoose.Error.CastError
+  ) {
+    res.status(400).send({ message: 'Переданы некоректные данные' });
+    return;
+  }
+  res.status(500).send({ message: 'Внутреняя ошибка сервера' });
+};
+
 const updateUser = (req, res, body) => {
   User.findByIdAndUpdate(
     req.user._id,
@@ -8,18 +20,16 @@ const updateUser = (req, res, body) => {
     { new: true, runValidators: true },
   )
     .then((result) => {
+      if (!result) {
+        res
+          .status(404)
+          .send({ message: 'Запрашиваемый пользователь не найден' });
+        return;
+      }
       res.status(200).send(result);
     })
     .catch((err) => {
-      if (
-        // eslint-disable-next-line operator-linebreak
-        err instanceof mongoose.Error.ValidationError ||
-        err instanceof mongoose.Error.CastError
-      ) {
-        res.status(400).send({ message: 'Переданы некоректные данные' });
-        return;
-      }
-      res.status(500).send({ message: 'Внутреняя ошибка сервера' });
+      errorHandler(err, res);
     });
 };
 
@@ -28,8 +38,8 @@ const getAllUsers = (req, res) => {
     .then((users) => {
       res.send(users);
     })
-    .catch(() => {
-      res.status(500).send({ message: 'Внутреняя ошибка сервера' });
+    .catch((err) => {
+      errorHandler(err, res);
     });
 };
 
@@ -44,8 +54,8 @@ const getUserById = (req, res) => {
       }
       res.send(user);
     })
-    .catch(() => {
-      res.status(500).send({ message: 'Внутреняя ошибка сервера' });
+    .catch((err) => {
+      errorHandler(err, res);
     });
 };
 
@@ -72,11 +82,7 @@ const addUser = (req, res) => {
       res.send(data);
     })
     .catch((err) => {
-      if (err instanceof mongoose.Error.ValidationError) {
-        res.status(400).send({ message: 'Переданы некоректные данные' });
-        return;
-      }
-      res.status(500).send({ message: 'Внутреняя ошибка сервера' });
+      errorHandler(err, res);
     });
 };
 
