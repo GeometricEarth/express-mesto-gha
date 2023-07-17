@@ -7,10 +7,10 @@ const errorHandler = (err, res) => {
     err instanceof mongoose.Error.ValidationError ||
     err instanceof mongoose.Error.CastError
   ) {
-    res.status(400).send({ message: 'Переданы некоректные данные' });
+    res.status(400).send({ message: 'Переданы некорректные данные' });
     return;
   }
-  res.status(500).send({ message: 'Внутреняя ошибка сервера' });
+  res.status(500).send({ message: 'На сервере произошла ошибка' });
 };
 
 const createCard = (req, res) => {

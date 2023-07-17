@@ -7,10 +7,10 @@ const errorHandler = (err, res) => {
     err instanceof mongoose.Error.ValidationError ||
     err instanceof mongoose.Error.CastError
   ) {
-    res.status(400).send({ message: 'Переданы некоректные данные' });
+    res.status(400).send({ message: 'Переданы некорректные данные' });
     return;
   }
-  res.status(500).send({ message: 'Внутреняя ошибка сервера' });
+  res.status(500).send({ message: 'На сервере произошла ошибка' });
 };
 
 const updateUser = (req, res, body) => {
@@ -61,7 +61,7 @@ const getUserById = (req, res) => {
 
 const updateUserProfile = (req, res) => {
   if ('avatar' in req.body) {
-    res.status(400).send({ message: 'Переданы некоректные данные' });
+    res.status(400).send({ message: 'Переданы некорректные данные' });
     return;
   }
 
@@ -70,7 +70,7 @@ const updateUserProfile = (req, res) => {
 
 const updateUserAvatar = (req, res) => {
   if (!req.body.avatar) {
-    res.status(400).send({ message: 'Переданы некоректные данные' });
+    res.status(400).send({ message: 'Переданы некорректные данные' });
   }
 
   updateUser(req, res, { avatar: req.body.avatar });
