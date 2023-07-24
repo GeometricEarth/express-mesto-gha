@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mogoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -9,6 +10,7 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 mogoose.connect('mongodb://127.0.0.1:27017/mestodb').catch(console.log);
+console.log(process.env.NODE_ENV);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
