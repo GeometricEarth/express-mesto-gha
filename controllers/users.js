@@ -1,4 +1,5 @@
 const { default: mongoose } = require('mongoose');
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
 const errorHandler = (err, res) => {
@@ -76,14 +77,22 @@ const updateUserAvatar = (req, res) => {
   updateUser(req, res, { avatar: req.body.avatar });
 };
 
-const addUser = (req, res) => {
-  User.create(req.body)
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      errorHandler(err, res);
-    });
+const addUser = async (req, res) => {
+  try {
+    if (!req.body) {
+      throw new Error({ message: 'Переданы некорректные данные' });
+    }
+
+    const hash = await bcrypt.hash(req.body.password, 10);
+
+    const user = await User.create({ ...req.body, password: hash });
+    if (!user) {
+      throw new Error({ message: 'Переданы некорректные данные' });
+    }
+    res.send(user);
+  } catch (err) {
+    errorHandler(err, res);
+  }
 };
 
 module.exports = {
