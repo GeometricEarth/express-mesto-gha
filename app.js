@@ -8,7 +8,13 @@ const cardsRoutes = require('./routes/cards');
 const { PORT = 3000 } = process.env;
 
 const app = express();
-mogoose.connect('mongodb://127.0.0.1:27017/mestodb').catch(console.log);
+mogoose
+  .connect('mongodb://127.0.0.1:27017/mestodb', {
+    useNewUrlParser: true,
+    useUnifiedTopology: false,
+    autoIndex: true,
+  })
+  .catch(console.log);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
