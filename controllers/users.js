@@ -1,5 +1,6 @@
 const { default: mongoose } = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const errorHandler = (err, res) => {
@@ -77,7 +78,7 @@ const updateUserAvatar = (req, res) => {
   updateUser(req, res, { avatar: req.body.avatar });
 };
 
-const addUser = async (req, res) => {
+const createUser = async (req, res) => {
   try {
     if (!req.body) {
       throw new Error({ message: 'Переданы некорректные данные' });
@@ -95,10 +96,39 @@ const addUser = async (req, res) => {
   }
 };
 
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      throw new Error({ message: 'Переданы некорректные данные', status: 401 });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new Error({ message: 'Переданы некорректные данные', status: 401 });
+    }
+    const isAuthorized = await bcrypt.compare(password, user.password);
+    if (!isAuthorized) {
+      throw new Error({ message: 'Переданы некорректные данные', status: 401 });
+    }
+
+    const token = jwt.sign({ _id: user._id }, 'dev-secret', {
+      expiresIn: '7d',
+    });
+
+    res
+      .cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true })
+      .end();
+  } catch (err) {
+    errorHandler(err, res);
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
-  addUser,
+  createUser,
   updateUserProfile,
   updateUserAvatar,
+  login,
 };
