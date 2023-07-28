@@ -31,12 +31,10 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(userAuth);
-
 app.post('/signin', login);
 app.post('/signup', createUser);
-app.use('/users', usersRoutes);
-app.use('/cards', cardsRoutes);
+app.use('/users', userAuth, usersRoutes);
+app.use('/cards', userAuth, cardsRoutes);
 
 app.use((_req, res) => {
   res
