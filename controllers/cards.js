@@ -71,7 +71,12 @@ const dislikeCard = (req, res) => {
 
 const deleteCardById = async (req, res) => {
   try {
-    const result = await Card.findByIdAndRemove(req.params.cardId);
+    const card = await Card.findById(req.params.cardId);
+    if (card.owner.toString() !== req.user._id) {
+      res.status(403).send({ message: 'Доступ запрещен' });
+      return;
+    }
+    const result = await Card.deleteOne({ _id: card._id });
     if (!result) {
       res.status(404).send({ message: 'Карточка не найдена' });
       return;
