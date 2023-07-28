@@ -8,7 +8,7 @@ const userAuth = (req, res, next) => {
     return res.status(401).send({ message: 'Необходима авторизация' });
   }
 
-  next();
+  return next();
 };
 
 module.exports = userAuth;
