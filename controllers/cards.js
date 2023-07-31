@@ -25,6 +25,7 @@ const createCard = (req, res) => {
 
 const getCards = (req, res) => {
   Card.find({})
+    .populate(['owner', 'likes'])
     .then((cards) => {
       res.status(200).send(cards);
     })
@@ -39,6 +40,7 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .populate(['owner', 'likes'])
     .then((result) => {
       if (!result) {
         res.status(404).send({ message: 'Карточка не найдена' });
@@ -57,6 +59,7 @@ const dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .populate(['owner', 'likes'])
     .then((result) => {
       if (!result) {
         res.status(404).send({ message: 'Карточка не найдена' });
