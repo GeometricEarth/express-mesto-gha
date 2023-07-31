@@ -108,7 +108,7 @@ const login = async (req, res) => {
       throw new Error({ message: 'Переданы некорректные данные', status: 401 });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select('+password');
     if (!user) {
       throw new Error({ message: 'Переданы некорректные данные', status: 401 });
     }
