@@ -1,5 +1,5 @@
 const express = require('express');
-const mogoose = require('mongoose');
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
@@ -11,7 +11,7 @@ const userAuth = require('./middlewares/auth');
 const { PORT = 3000 } = process.env;
 
 const app = express();
-mogoose
+mongoose
   .connect('mongodb://127.0.0.1:27017/mestodb', {
     useNewUrlParser: true,
     useUnifiedTopology: false,
@@ -32,6 +32,23 @@ app.use((_req, res) => {
   res
     .status(404)
     .send({ message: 'Страница которую вы запрашиваете не существует' });
+});
+
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, _next) => {
+  const { status = 500, message } = err;
+  if (
+    // eslint-disable-next-line operator-linebreak
+    err instanceof mongoose.Error.ValidationError ||
+    err instanceof mongoose.Error.CastError
+  ) {
+    res.status(400).send({ message: 'Переданы некорректные данные' });
+    return;
+  }
+
+  res.status(status).send({
+    message: status === 500 ? 'На сервере произошла ошибка' : message,
+  });
 });
 
 app.listen(PORT, () => console.log(`App listening on port ${PORT}`));
