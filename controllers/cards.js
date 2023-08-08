@@ -1,23 +1,9 @@
-// const { default: mongoose } = require('mongoose');
 const Card = require('../models/card');
 const NotFoundError = require('../utils/httpErrors/NotFound');
 const ForbiddenError = require('../utils/httpErrors/Forbidden');
 
-// const validationErrorMessage = 'Переданы некорректные данные';
 const notFoundErrorMessage = 'Карточка не найдена';
 const forbiddenErrorMessage = 'Доступ запрещен';
-
-// const errorHandler = (err, res) => {
-//   if (
-//     // eslint-disable-next-line operator-linebreak
-//     err instanceof mongoose.Error.ValidationError ||
-//     err instanceof mongoose.Error.CastError
-//   ) {
-//     res.status(400).send({ message: validationErrorMessage });
-//     return;
-//   }
-//   res.status(500).send({ message: serverErrorMessage });
-// };
 
 const createCard = (req, res, next) => {
   Card.create({ ...req.body, owner: req.user._id })
@@ -45,7 +31,7 @@ const likeCard = (req, res, next) => {
     .populate(['owner', 'likes'])
     .then((result) => {
       if (!result) {
-        throw new NotFoundError({ message: notFoundErrorMessage });
+        throw new NotFoundError(notFoundErrorMessage);
       }
       res.status(200).send(result);
     })
@@ -61,7 +47,7 @@ const dislikeCard = (req, res, next) => {
     .populate(['owner', 'likes'])
     .then((result) => {
       if (!result) {
-        throw new NotFoundError({ message: notFoundErrorMessage });
+        throw new NotFoundError(notFoundErrorMessage);
       }
       res.status(200).send(result);
     })
@@ -71,13 +57,15 @@ const dislikeCard = (req, res, next) => {
 const deleteCardById = async (req, res, next) => {
   try {
     const card = await Card.findById(req.params.cardId);
+    if (!card) {
+      throw new NotFoundError(notFoundErrorMessage);
+    }
     if (card.owner.toString() !== req.user._id) {
-      throw new ForbiddenError({ message: forbiddenErrorMessage });
+      throw new ForbiddenError(forbiddenErrorMessage);
     }
     const result = await Card.deleteOne({ _id: card._id });
     if (!result) {
-      res.status(404).send({ message: notFoundErrorMessage });
-      return;
+      throw new NotFoundError(notFoundErrorMessage);
     }
     res.status(200).send({ message: 'Карточка удалена' });
   } catch (err) {
