@@ -43,10 +43,7 @@ app.post(
       about: Joi.string().min(2).max(30),
       name: Joi.string().min(2).max(30),
       avatar: Joi.string().pattern(
-        /^https?:\/\/(?:www\.)?[-a-zA-z0-9]+\.[a-z]+(?:\/[-a-zA-Z]*)*$/,
-      ),
-      link: Joi.string().pattern(
-        /^https?:\/\/(?:www\.)?[-a-zA-z0-9]+\.[a-z]+(?:\/[-a-zA-Z]*)*$/,
+        /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]+\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/,
       ),
     }),
   }),
