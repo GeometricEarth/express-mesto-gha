@@ -34,7 +34,24 @@ app.post(
   }),
   login,
 );
-app.post('/signup', createUser);
+app.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(6),
+      avatar: Joi.string().pattern(
+        /^https?:\/\/(?:www\.)?[-a-zA-z0-9]+\.[a-z]+(?:\/[-a-zA-Z]*)*$/,
+      ),
+      link: Joi.string().pattern(
+        /^https?:\/\/(?:www\.)?[-a-zA-z0-9]+\.[a-z]+(?:\/[-a-zA-Z]*)*$/,
+      ),
+      about: Joi.string().min(2).max(30),
+      name: Joi.string().min(2).max(30),
+    }),
+  }),
+  createUser,
+);
 app.use('/users', userAuth, usersRoutes);
 app.use('/cards', userAuth, cardsRoutes);
 
