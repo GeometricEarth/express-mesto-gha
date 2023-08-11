@@ -65,6 +65,12 @@ app.use(errors());
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, _next) => {
+  if (err.code === 11000) {
+    // eslint-disable-next-line no-param-reassign
+    err.status = 409;
+    // eslint-disable-next-line no-param-reassign
+    err.message = 'Пользователь с таким email уже существует';
+  }
   const { status = 500, message } = err;
   if (
     // eslint-disable-next-line operator-linebreak
