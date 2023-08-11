@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const { celebrate, Joi, errors } = require('celebrate');
 
 const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
@@ -23,7 +24,16 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.post('/signin', login);
+app.post(
+  '/signin',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().min(6),
+      password: Joi.string().required().min(6),
+    }),
+  }),
+  login,
+);
 app.post('/signup', createUser);
 app.use('/users', userAuth, usersRoutes);
 app.use('/cards', userAuth, cardsRoutes);
@@ -33,6 +43,8 @@ app.use((_req, res) => {
     .status(404)
     .send({ message: 'Страница которую вы запрашиваете не существует' });
 });
+
+app.use(errors());
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, _next) => {
