@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 
@@ -8,6 +7,7 @@ const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
 const { createUser, login } = require('./controllers/users');
 const userAuth = require('./middlewares/auth');
+const NotFoundError = require('./utils/httpErrors/NotFound');
 
 const { PORT = 3000 } = process.env;
 
@@ -20,8 +20,8 @@ mongoose
   })
   .catch(console.log);
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.post(
@@ -52,16 +52,17 @@ app.post(
 app.use('/users', userAuth, usersRoutes);
 app.use('/cards', userAuth, cardsRoutes);
 
-app.use((_req, res) => {
-  res
-    .status(404)
-    .send({ message: 'Страница которую вы запрашиваете не существует' });
+app.use((_req, res, next) => {
+  const err = new NotFoundError(
+    'Страница которую вы запрашиваете не существует',
+  );
+  next(err);
 });
 
 app.use(errors());
 
 // eslint-disable-next-line no-unused-vars
-app.use((err, req, res, _next) => {
+app.use((err, _req, res, _next) => {
   if (err.code === 11000) {
     // eslint-disable-next-line no-param-reassign
     err.status = 409;
