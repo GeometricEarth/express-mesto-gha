@@ -53,10 +53,7 @@ app.use('/users', userAuth, usersRoutes);
 app.use('/cards', userAuth, cardsRoutes);
 
 app.use((_req, res, next) => {
-  const err = new NotFoundError(
-    'Страница которую вы запрашиваете не существует',
-  );
-  next(err);
+  next(new NotFoundError('Страница которую вы запрашиваете не существует'));
 });
 
 app.use(errors());
