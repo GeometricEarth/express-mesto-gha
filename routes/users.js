@@ -19,7 +19,16 @@ router.get(
   }),
   getUserById,
 );
-router.patch('/me', updateUserProfile);
+router.patch(
+  '/me',
+  celebrate({
+    body: Joi.object().keys({
+      about: Joi.string().min(2).max(30),
+      name: Joi.string().min(2).max(30),
+    }),
+  }),
+  updateUserProfile,
+);
 router.patch('/me/avatar', updateUserAvatar);
 
 module.exports = router;
