@@ -7,6 +7,7 @@ const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
 const { createUser, login } = require('./controllers/users');
 const userAuth = require('./middlewares/auth');
+const { urlRegExp } = require('./utils/constants');
 
 const errorHandler = require('./middlewares/errorHandler');
 const NotFoundError = require('./utils/httpErrors/NotFound');
@@ -44,9 +45,7 @@ app.post(
       password: Joi.string().required().min(6),
       about: Joi.string().min(2).max(30),
       name: Joi.string().min(2).max(30),
-      avatar: Joi.string().pattern(
-        /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]+\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/,
-      ),
+      avatar: Joi.string().pattern(urlRegExp),
     }),
   }),
   createUser,
