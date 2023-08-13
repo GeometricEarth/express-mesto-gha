@@ -1,4 +1,4 @@
-module.exports = class ValidationError extends Error {
+module.exports = class DuplicateKeyError extends Error {
   constructor(message) {
     super(message);
     this.status = 400;

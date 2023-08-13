@@ -1,4 +1,6 @@
 const Card = require('../models/card');
+
+const checkErrorType = require('../utils/checkErrorType');
 const NotFoundError = require('../utils/httpErrors/NotFound');
 const ForbiddenError = require('../utils/httpErrors/Forbidden');
 
@@ -10,7 +12,9 @@ const createCard = (req, res, next) => {
     .then((data) => {
       res.status(200).send(data);
     })
-    .catch(next);
+    .catch((err) => {
+      next(checkErrorType(err));
+    });
 };
 
 const getCards = (req, res, next) => {
@@ -19,7 +23,9 @@ const getCards = (req, res, next) => {
     .then((cards) => {
       res.status(200).send(cards);
     })
-    .catch(next);
+    .catch((err) => {
+      next(checkErrorType(err));
+    });
 };
 
 const likeCard = (req, res, next) => {
@@ -35,7 +41,9 @@ const likeCard = (req, res, next) => {
       }
       res.status(200).send(result);
     })
-    .catch(next);
+    .catch((err) => {
+      next(checkErrorType(err));
+    });
 };
 
 const dislikeCard = (req, res, next) => {
@@ -51,7 +59,9 @@ const dislikeCard = (req, res, next) => {
       }
       res.status(200).send(result);
     })
-    .catch(next);
+    .catch((err) => {
+      next(checkErrorType(err));
+    });
 };
 
 const deleteCardById = async (req, res, next) => {
@@ -69,7 +79,7 @@ const deleteCardById = async (req, res, next) => {
     }
     res.status(200).send({ message: 'Карточка удалена' });
   } catch (err) {
-    next(err);
+    next(checkErrorType(err));
   }
 };
 
