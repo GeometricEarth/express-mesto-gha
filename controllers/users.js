@@ -84,7 +84,7 @@ const createUser = async (req, res, next) => {
     if (!user) {
       throw new BadRequestError(validationErrorMessage);
     }
-    return res.send(user);
+    return res.status(201).send(user);
   } catch (err) {
     if (err.code === 11000) {
       return next(
